@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bouncing Numbers</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background-color: black;
+        }
+        .number {
+            position: absolute;
+            font-size: 36px; /* Increased font size */
+            font-weight: bold;
+            color: white;
+            user-select: none;
+        }
+        .highlight {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+
+<script>
+    const numbers = [];
+    const count = 40; // Increased total number of numbers
+    const containerWidth = window.innerWidth;
+    const containerHeight = window.innerHeight;
+
+    function getRandomInt(min, max) {
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+
+    function createNumberElement(value, isHighlight) {
+        const numberElement = document.createElement('div');
+        numberElement.textContent = value;
+        numberElement.classList.add('number');
+        if (isHighlight) {
+            numberElement.classList.add('highlight');
+        }
+        document.body.appendChild(numberElement);
+        return numberElement;
+    }
+
+    for (let i = 0; i < count; i++) {
+        const value = i === 0 ? 60 : getRandomInt(1, 99); // Ensure one number is 60
+        const isHighlight = value === 60;
+
+        const numberElement = createNumberElement(value, isHighlight);
+
+        const speedX = (Math.random() - 0.5) * 6;
+        const speedY = (Math.random() - 0.5) * 6;
+        const position = {
+            x: getRandomInt(0, containerWidth - 50),
+            y: getRandomInt(0, containerHeight - 50)
+        };
+
+        numbers.push({
+            element: numberElement,
+            speedX,
+            speedY,
+            position
+        });
+    }
+
+    function update() {
+        numbers.forEach((number) => {
+            const { element, speedX, speedY, position } = number;
+
+            position.x += speedX;
+            position.y += speedY;
+
+            if (position.x <= 0 || position.x >= containerWidth - element.offsetWidth) {
+                number.speedX *= -1;
+                element.style.color = getRandomColor();
+            }
+
+            if (position.y <= 0 || position.y >= containerHeight - element.offsetHeight) {
+                number.speedY *= -1;
+                element.style.color = getRandomColor();
+            }
+
+            element.style.transform = `translate(${position.x}px, ${position.y}px)`;
+        });
+
+        requestAnimationFrame(update);
+    }
+
+    function getRandomColor() {
+        return `rgb(${getRandomInt(0, 255)}, ${getRandomInt(0, 255)}, ${getRandomInt(0, 255)})`;
+    }
+
+    update();
+</script>
+
+</body>
+</html>
